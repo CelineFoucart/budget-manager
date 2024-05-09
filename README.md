@@ -7,12 +7,14 @@ npm install
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm run electron:serve
 ```
 
-### Compiles and minifies for production
+### Build the app
 ```
-npm run build
+npm run electron:build
+npm electron:build --linux
+npm electron:build --win
 ```
 
 ### Lints and fixes files
