@@ -38,10 +38,29 @@ body {
     border-color: #4e73df
 }
 
+.text-primary {
+    color: #2653d4 !important;
+}
+
+.border-primary  {
+    border-color: #4e73df !important;
+}
+
 .btn-primary:hover {
     color: #fff;
-    background-color: #2e59d9;
+    background-color: #2653d4;
     border-color: #2653d4
+}
+
+.btn-outline-primary {
+    border-color: #4e73df;
+    color: #4e73df;
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #4e73df;
+    border-color: #4e73df;
 }
 
 .required::after {

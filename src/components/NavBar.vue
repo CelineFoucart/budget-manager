@@ -3,19 +3,14 @@
         <div class="container-fluid">
             <ul class="navbar-nav">
                 <li class="nav-item pe-2">
-                    <router-link to="/" class="nav-link topMenuBtn" href="#" title="Accueil">
+                    <router-link to="/" class="nav-link topMenuBtn" title="Suivi">
                         <i class="fa fa-home"></i>
                     </router-link>
                 </li>
-                <li class="nav-item px-2">
-                    <router-link to="/suivi" class="nav-link topMenuBtn" href="#" title="Suivi">
-                        <i class="fa fa-table"></i>
-                    </router-link>
-                </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link topMenuBtn" title="Configuration">
+                    <router-link to="/config" class="nav-link topMenuBtn" title="Configuration">
                         <i class="fa-solid fa-gears"></i>
-                    </a>
+                    </router-link>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto" id="topMenuBtns">

@@ -3,7 +3,7 @@
         <header class="mb-2">
             <div class="row align-items-center mb-3">
                 <div class="col-md-6 col-lg-8">
-                    <h1 class="display-5 text-gray">Livre de compte</h1>
+                    <h1 class="display-5 text-gray">Suivi de trésorerie</h1>
                 </div>
                 <div class="col-md-6 col-lg-4 text-end">
                     <button class="btn btn-primary" @click="onAppend">
@@ -13,9 +13,18 @@
                 <div class="col-12 pt-2">
                     <p>
                         Sur cette page, les recettes et les dépenses sont affichées, mois par mois.
-                        Cliquer sur le bouton à droite pour en ajouter une. Les lignes en gris sont des
-                        montants déclarés comme passés en banque.
+                        Cliquer sur le bouton à droite pour en ajouter une.
                     </p>
+                    <ul class="fa-ul">
+                        <li>
+                            <span class="fa-li"><i class="fa-solid fa-table"></i></span>
+                            <span>Sur l'onglet tableau, les lignes en gris sont des montants déclarés comme passés en banque.</span>
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fa-solid fa-chart-pie fa-fw"></i> </span>
+                            <span>Sur l'onglet graphique figure les statistiques du mois.</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
@@ -38,12 +47,26 @@
 
         <section class="card shadow-sm">
             <header class="card-header py-2">
-                <h2 class="m-0 text-capitalize font-weight-bold text-primary h4">
-                    {{ currentMonth }}
-                </h2>
+                <div class="row">
+                    <div class="col-8">
+                        <h2 class="m-0 text-capitalize font-weight-bold text-primary h4">
+                            {{ currentMonth }}
+                        </h2>
+                    </div>
+                    <div class="col-4 text-end">
+                        <div class="btn-group">
+                            <button @click="openTableCard" class="btn btn-sm" :class="{'btn-primary': showTable, 'btn-outline-primary': showStats}" title="Tableau">
+                                <i class="fa-solid fa-table"></i>
+                            </button>
+                            <button @click="openStatsCard" class="btn btn-sm" :class="{'btn-primary': showStats, 'btn-outline-primary': showTable}" title="Statistiques">
+                                <i class="fa-solid fa-chart-pie"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </header>
             <div class="card-body">
-                <table class="table table-bordered">
+                <table class="table table-bordered" v-if="showTable === true">
                     <thead>
                         <tr>
                             <th class="text-gray"><i class="fa fa-calendar fa-fw"></i> Date</th>
@@ -89,8 +112,11 @@
                         </tr>
                     </tbody>
                 </table>
+                
+                <StatsBlock v-if="showStats === true"></StatsBlock>
             </div>
         </section>
+
         <AddAction :data="dataToHandle" :currentDate="date" @on-close="openEditModal = false" v-if="openEditModal"></AddAction>
         <Delete 
             :title="dataToHandle.title" 
@@ -113,6 +139,7 @@ import { mapStores } from 'pinia';
 import { createToastify } from '@/helper/toastify.js'
 import AddAction from '@/components/AddAction.vue';
 import Delete from '@/helper/Delete.vue';
+import StatsBlock from "@/components/StatsBlock.vue";
 
 export default {
     name: 'BudgetMonitoring',
@@ -120,7 +147,8 @@ export default {
     components: {
         VueDatePicker,
         AddAction,
-        Delete
+        Delete,
+        StatsBlock
     },
 
     data() {
@@ -133,7 +161,9 @@ export default {
             dataToHandle: { title: '', date: null, category: null, amount: 0, isPassed: false, isChecked: false },
             openEditModal: false,
             openDeleteModal: false,
-            loading: false
+            loading: false,
+            showTable: true,
+            showStats: false
         }
     },
 
@@ -175,6 +205,18 @@ export default {
 
         formatDateTime(value) {
             return dayjs(value).format('DD/MM/YYYY')
+        },
+
+        openTableCard() {
+            this.showTable = true;
+            this.showStats = false;
+        },
+
+        openStatsCard() {
+            this.showTable = false;
+            this.showStats = true;
+
+            console.log(this.showStats)
         },
 
         onAppend() {

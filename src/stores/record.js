@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
 export const useRecordStore = defineStore('record', {
-    state: () => ({ records: [], categories: {} }),
+    state: () => ({ records: [], categories: {}, monthlyRevenue: 0, monthlyExpense: 0, startingSold: 0 }),
 
     actions: {
         async getCategories() {
@@ -19,7 +19,27 @@ export const useRecordStore = defineStore('record', {
 
         async getRecords(minDate, maxDate) {
             try {
+                this.monthlyRevenue = 0;
+                this.monthlyExpense = 0;
+                this.startingSold = 0;
                 this.records = await window.frame.findRecords(minDate, maxDate);
+
+                for (let i = 0; i < this.records.length; i++) {
+                    const record = this.records[i];
+                    const amount = parseFloat(record.amount)
+                    if (isNaN(amount)) {
+                        continue;
+                    }
+
+                    this.startingSold = (this.startingSold + record);
+                    this.records[i].sold = this.startingSold;
+
+                    if (amount < 0) {
+                        this.monthlyExpense+= amount;
+                    } else {
+                        this.monthlyRevenue+= amount;
+                    }
+                }
 
                 return true;
             } catch (error) {

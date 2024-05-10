@@ -1,17 +1,17 @@
 import BudgetMonitoring from './views/BudgetMonitoring.vue'
-import HomePage from './views/HomePage.vue'
+import ConfigPage from './views/ConfigPage.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 export default new createRouter({
     history: createWebHistory(0),
     routes: [
         {
-            path: `/suivi`,
+            path: `/`,
             component: BudgetMonitoring
         },
         {
-            path: `/`,
-            component: HomePage
+            path: `/config`,
+            component: ConfigPage
         }
     ]
 })

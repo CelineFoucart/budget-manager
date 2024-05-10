@@ -1,7 +1,7 @@
 <template>
   <NavBar></NavBar>
 
-  <main class="container-fluid">
+  <main class="container-fluid mb-2">
     <router-view></router-view>
   </main>
 </template>
