@@ -7,10 +7,15 @@
                         <i class="fa fa-home"></i>
                     </router-link>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item px-2">
                     <router-link to="/suivi" class="nav-link topMenuBtn" href="#" title="Suivi">
                         <i class="fa fa-table"></i>
                     </router-link>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link topMenuBtn" title="Configuration">
+                        <i class="fa-solid fa-gears"></i>
+                    </a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto" id="topMenuBtns">

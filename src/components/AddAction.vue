@@ -1,125 +1,103 @@
 <template>
-    <aside>
-        <button
-            type="button"
-            class="btn btn-primary shadow-sm"
-            data-bs-toggle="modal"
-            data-bs-target="#addModal"
-        >
-            <i class="bi bi-plus-circle"></i> Ajouter
-        </button>
-
-        <div
-            id="addModal"
-            class="modal fade"
-            tabindex="-1"
-            aria-labelledby="addModalLabel"
-            aria-hidden="true"
-        >
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header py-2">
-                        <h5 id="addModalLabel" class="modal-title">Ajouter</h5>
-                        <span data-bs-dismiss="modal" type="button" aria-label="Close">
-                            <i class="bi bi-x h1 mb-0"></i>
-                        </span>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-muted">
-                            Pour déclarer un débit, il suffit de mettre un montant négatif dans le
-                            champ <em>montant</em>.
-                        </p>
-                        <form action="">
-                            <div class="mb-3">
-                                <VueDatePicker
-                                    v-model="date"
-                                    locale="fr"
-                                    :enable-time-picker="false"
-                                    auto-apply
-                                    required
-                                />
-                            </div>
-                            <div class="mb-3">
-                                <label for="title">Libellé</label>
-                                <input
-                                    id="title"
-                                    v-model="title"
-                                    type="text"
-                                    class="form-control"
-                                />
-                            </div>
-                            <div class="mb-3">
-                                <label for="title">Montant</label>
-                                <input
-                                    id="value"
-                                    v-model="value"
-                                    type="number"
-                                    class="form-control"
-                                />
-                            </div>
-                            <div class="form-check">
-                                <input
-                                    id="isPassed"
-                                    v-model="isPassed"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                />
-                                <label class="form-check-label" for="isPassed">
-                                    Déclarer ce montant comme passé en banque
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input
-                                    id="isChecked"
-                                    v-model="isChecked"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                />
-                                <label class="form-check-label" for="isChecked">
-                                    Déclarer ce montant comme vérifier
-                                </label>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="bi bi-x"></i>
-                            Fermer
-                        </button>
-                        <button
-                            type="button"
-                            class="btn btn-primary"
-                            data-bs-dismiss="modal"
-                            @click.prevent="save"
-                        >
-                            <i class="bi bi-check-lg"></i>
-                            Sauvegarder
-                        </button>
-                    </div>
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" id="addModal" tabindex="-1"  aria-labelledby="addModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 id="addModalLabel" class="modal-title">Ligne</h5>
+                    <button type="button" class="btn-close" @click="close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">
+                        Pour déclarer un débit, il suffit de mettre un montant négatif dans le
+                        champ <em>montant</em>.
+                    </p>
+                    <form action="">
+                        <div class="mb-3">
+                            <label for="date" class="required">Date</label>
+                            <VueDatePicker id="date" v-model="date" locale="fr" :format="format" :enable-time-picker="false" auto-apply required/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="title" class="required">Libellé</label>
+                            <input id="title" v-model="title" type="text" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="category" class="required">Catégorie</label>
+                            <select class="form-select"  v-model="category" id="category" required>
+                                <option :value="category._id" v-for="category in recordStore.categories" :key="category._id">
+                                    {{ category.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amount" class="required">Montant</label>
+                            <input id="amount" v-model="amount" type="number" class="form-control" required/>
+                        </div>
+                        <div class="form-check">
+                            <input id="isPassed" v-model="isPassed" class="form-check-input" type="checkbox" required />
+                            <label class="form-check-label" for="isPassed">
+                                Déclarer ce montant comme passé en banque
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input id="isChecked" v-model="isChecked" class="form-check-input" type="checkbox"/>
+                            <label class="form-check-label" for="isChecked">
+                                Déclarer ce montant comme vérifier
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @click="close">
+                        <i class="fa-solid fa-xmark fa-fw"></i>
+                        Fermer
+                    </button>
+                    <button type="button" class="btn btn-success btn-sm"  data-bs-dismiss="modal" @click.prevent="save">
+                        <i class="fa-solid fa-floppy-disk fa-fw"></i>
+                        Sauvegarder
+                    </button>
                 </div>
             </div>
         </div>
-    </aside>
+    </div>
 </template>
 
 <script>
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { fr } from 'date-fns/locale'
+import { useRecordStore } from "../stores/record.js";
+import { mapStores } from 'pinia';
+import { createToastify } from '@/helper/toastify.js'
+import dayjs from 'dayjs'
+import 'dayjs/locale/fr'
 
 export default {
     components: {
         VueDatePicker
     },
+
+    emits: ['on-close'],
+
+    props: {
+        data: Object,
+        currentDate: Object,
+    },
+
     data() {
         return {
             date: null,
             title: '',
-            value: null,
+            category: null,
+            amount: null,
             isPassed: false,
             isChecked: false,
             fr: fr
         }
+    },
+
+    computed: {
+        ...mapStores(useRecordStore),
     },
 
     mounted() {
@@ -128,31 +106,53 @@ export default {
 
     methods: {
         reset() {
-            this.title = ''
-            this.date = new Date()
-            this.value = null
-            this.isPassed = false
-            this.isChecked = false
+            this.title = this.data.title ? this.data.title : ''
+            this.date =  this.data.date ? this.data.date : new Date()
+            this.amount = this.data.amount ? this.data.amount : 0;
+            this.category = this.data.category ? this.data.category : null;
+            this.isPassed = this.data.amount ? this.data.isPassed : false;
+            this.isChecked = this.data.isChecked ? this.data.isChecked : false;
+        },
+
+        close() {
+            this.$emit('on-close');
+        },
+
+        format(date) {
+            return dayjs(date).format('DD/MM/YYYY');
         },
 
         async save() {
             const data = {
+                date: dayjs(this.date).format('YYYY-MM-DD'),
+                amount: this.amount,
                 title: this.title,
-                date: this.date,
-                value: this.value,
+                category: this.category,
                 isPassed: this.isPassed,
                 isChecked: this.isChecked
             }
 
-            this.reset()
-            const status = await window.electron.ipcRenderer.invoke('on-save', {
-                data: data,
-                action: 'add'
-            })
-
-            console.log(status)
-            // condition sur le succès
+            let status = false;
+            if (this.data._id === null) {
+                const currentDateString = this.currentDate.year + '-' + `${this.currentDate.month}`.padStart(2, '0');
+                const withInsert = data.date.startsWith(currentDateString);
+                status = await this.recordStore.appendRecord(data, withInsert);
+            } else {
+                status = await this.recordStore.updateRecord(data, this.data._id);
+            }
+            
+            if (status) {
+                createToastify("L'élément a été enregistré", 'success');
+                this.close();
+            } else {
+                createToastify("L'opération a échoué", 'error');
+            }
         }
     }
 }
 </script>
+<style>
+#addModal {
+    display: block;
+}
+</style>

@@ -5,6 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
+const fs = require('fs')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -103,7 +104,13 @@ if (isDevelopment) {
 	}
 }
 
-// ipc
 ipcMain.on('closeApp', () => {
 	app.exit()
 })
+
+// set up database if it is empty
+if (fs.existsSync(`../data/categories.db`) === false) {
+    const Datastore = require('@seald-io/nedb');
+    const db = new Datastore({ filename: '../data/categories.db', autoload: true });
+    db.insert([{name: 'alimentaire'}, {name: 'salaires'}, {name: 'charges'}]);
+}

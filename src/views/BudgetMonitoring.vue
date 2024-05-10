@@ -6,7 +6,7 @@
                     <h1 class="display-5 text-gray">Livre de compte</h1>
                 </div>
                 <div class="col-md-6 col-lg-4 text-end">
-                    <button class="btn btn-primary">
+                    <button class="btn btn-primary" @click="onAppend">
                         <i class="fa fa-plus fa-fw"></i> Ajouter
                     </button>
                 </div>
@@ -38,7 +38,7 @@
 
         <section class="card shadow-sm">
             <header class="card-header py-2">
-                <h2 class="m-0 font-weight-bold text-primary h4">
+                <h2 class="m-0 text-capitalize font-weight-bold text-primary h4">
                     {{ currentMonth }}
                 </h2>
             </header>
@@ -49,24 +49,49 @@
                             <th class="text-gray"><i class="fa fa-calendar fa-fw"></i> Date</th>
                             <th class="text-gray"><i class="fa fa-file fa-fw"></i> Libellé</th>
                             <th class="text-gray"><i class="fa fa-tag fa-fw"></i> Catégorie</th>
-                            <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Montant</th>
+                            <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Débit</th>
+                            <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Crédit</th>
+                            <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Solde</th>
                             <th class="text-gray"><i class="fa fa-check fa-fw"></i> Vérifié</th>
                             <th class="text-gray" data-orderable="false"><i class="fa fa-edit fa-fw"></i> Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr :class="{'isPassed': record.isPassed === true}" v-for="record in recordStore.records" :key="record._id">
+                            <td>{{ record.date }}</td>
+                            <td>{{ record.title }}</td>
+                            <td>
+                                <span v-if="recordStore.categories[record.category]">
+                                    {{ recordStore.categories[record.category].name }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-danger" v-if="record.amount <= 0">{{ record.amount }}</span>
+                            </td>
+                            <td>
+                                <span class="text-success" v-if="record.amount > 0">{{ record.amount }}</span>
+                            </td>
                             <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>
+                                <span class="badge bg-success" v-if="record.isChecked === true">Oui</span>
+                                <span class="badge bg-danger" v-if="record.isChecked === false">Non</span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary btn-sm" title="Editer" @click="onEdit(record)">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" title="Supprimer">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
+        <AddAction :data="dataToHandle" :currentDate="date" @on-close="openEditModal = false" v-if="openEditModal"></AddAction>
     </article>
 </template>
 
@@ -76,25 +101,82 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { fr } from 'date-fns/locale'
 import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
+import { useRecordStore } from "../stores/record.js";
+import { mapStores } from 'pinia';
+import { createToastify } from '@/helper/toastify.js'
+import AddAction from '@/components/AddAction.vue'
 
 export default {
     name: 'BudgetMonitoring',
 
     components: {
         VueDatePicker,
+        AddAction
     },
 
     data() {
         return {
-            date: new Date(),
-            fr: fr
+            date: {
+                month: new Date().getMonth(),
+                year: new Date().getFullYear()
+            },
+            fr: fr,
+            dataToHandle: { title: '', date: null, category: null, amount: 0, isPassed: false, isChecked: false },
+            openEditModal: false
         }
     },
 
     computed: {
+        ...mapStores(useRecordStore),
+
         currentMonth() {
-            return dayjs(this.date).locale('fr').format('MMMM YYYY');
+            const date = new Date(this.date.year, this.date.month, 1)
+            return dayjs(date).locale('fr').format('MMMM YYYY');
+        }
+    },
+
+    watch: {
+        async date() {
+            await this.getRecords();
+        }
+    },
+
+    async mounted () {
+        const statusCategory = await this.recordStore.getCategories();
+        if (!statusCategory) {
+            createToastify('Le chargement des catégories a échoué', 'error');
+        }
+
+        await this.getRecords();
+    },
+
+    methods: {
+        async getRecords() {
+            const date = new Date(this.date.year, this.date.month, 1)
+            const minDate = dayjs(date).startOf('month').format('YYYY-MM-DD')
+            const maxDate = dayjs(date).endOf('month').format('YYYY-MM-DD')
+
+            const status = await this.recordStore.getRecords(minDate, maxDate);
+            if (status === false) {
+                createToastify('Le chargement du registre a échoué', 'error');
+            }
+        },
+
+        onAppend() {
+            this.dataToHandle = { _id: null, title: '', date: null, category: null, amount: 0, isPassed: false, isChecked: false };
+            this.openEditModal = true;
+        },
+
+        onEdit(record) {
+            this.dataToHandle = record;
+            this.openEditModal = true;
         }
     },
 }
 </script>
+
+<style>
+.isPassed > td {
+    background-color: #f8f9fa;
+}
+</style>
