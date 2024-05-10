@@ -20,7 +20,7 @@
             </div>
 
             <div class="d-flex gap-2 justify-content-end">
-                <button id="prevMonth" class="btn-sm btn btn-primary"><i class="fa fa-chevron-left fa-fw"></i></button>
+                <button @click="previousMonth" class="btn-sm btn btn-primary"><i class="fa fa-chevron-left fa-fw"></i></button>
                 <div class="w-25">
                     <VueDatePicker
                         v-model="date"
@@ -32,7 +32,7 @@
                         required
                     />
                 </div>
-                <button id="nextMonth" class="btn-sm btn btn-primary"><i class="fa fa-chevron-right fa-fw"></i></button>
+                <button @click="nextMonth" class="btn-sm btn btn-primary"><i class="fa fa-chevron-right fa-fw"></i></button>
             </div>
         </header>
 
@@ -162,10 +162,6 @@ export default {
     },
 
     methods: {
-        formatDateTime(value) {
-            return dayjs(value).format('DD/MM/YYYY')
-        },
-
         async getRecords() {
             const date = new Date(this.date.year, this.date.month, 1)
             const minDate = dayjs(date).startOf('month').format('YYYY-MM-DD')
@@ -175,6 +171,10 @@ export default {
             if (status === false) {
                 createToastify('Le chargement du registre a échoué', 'error');
             }
+        },
+
+        formatDateTime(value) {
+            return dayjs(value).format('DD/MM/YYYY')
         },
 
         onAppend() {
@@ -190,6 +190,24 @@ export default {
         onDelete(record) {
             this.dataToHandle = record;
             this.openDeleteModal = true;
+        },
+
+        previousMonth() {
+            const date = dayjs(new Date(this.date.year, this.date.month, 1)).subtract(1, 'month');
+            const converted = date.toDate();
+            this.date = {
+                month: converted.getMonth(),
+                year: converted.getFullYear()
+            }
+        },
+        
+        nextMonth() {
+            const date = dayjs(new Date(this.date.year, this.date.month, 1)).add(1, 'month');
+            const converted = date.toDate();
+            this.date = {
+                month: converted.getMonth(),
+                year: converted.getFullYear()
+            }
         },
 
         async performDelete() {
