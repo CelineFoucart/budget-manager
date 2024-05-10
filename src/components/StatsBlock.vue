@@ -38,11 +38,11 @@
         <div class="col-12">
             <h3 class="mt-3 h5 border text-center bg-light text-uppercase py-2 py-1">Ce mois-ci</h3>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 col-lg-7">
             <!-- par catégorie -->
         </div>
-        <div class="col-md-6">
-            <!-- camembert dépense vs revenue -->
+        <div class="col-md-6 col-lg-5">
+            <Pie :data="pieData" :options="options" :style="styles" />
         </div>
         <div class="col-12">
             <h3 class="h5 mt-3 h5 border text-center bg-light text-uppercase py-2 py-1">Le mois précédent</h3>
@@ -57,19 +57,61 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
+import 'dayjs/locale/fr'
 import { useRecordStore } from "../stores/record.js";
 import { mapStores } from 'pinia';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Pie } from 'vue-chartjs';
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default {
     name: 'StatsBlock',
 
+    components: {
+        Pie,
+    },
+
+    props: {
+        currentDate: Object,
+    },
+
+    data() {
+        return {
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            },
+            styles: {
+                width: '450px'
+            }
+        }
+    },
+
     computed: {
         ...mapStores(useRecordStore),
+
+        currentMonth() {
+            const date = new Date(this.currentDate.year, this.currentDate.month, 1)
+            return dayjs(date).locale('fr').format('MMMM YYYY');
+        },
 
         left() {
             const expense = Math.abs(this.recordStore.monthlyExpense);
 
             return this.recordStore.monthlyRevenue - expense;
+        },
+
+        pieData() {
+            return {
+                labels: ['Dépenses ' + this.currentMonth, 'Revenus ' + this.currentMonth],
+                datasets: [
+                    {
+                        backgroundColor: ['#dc3545', '#198754'],
+                        data: [Math.abs(this.recordStore.monthlyExpense), this.recordStore.monthlyRevenue]
+                    }
+                ]
+            }
         }
     },
 }

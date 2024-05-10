@@ -113,7 +113,7 @@
                     </tbody>
                 </table>
                 
-                <StatsBlock v-if="showStats === true"></StatsBlock>
+                <StatsBlock :currentDate="date" v-if="showStats === true"></StatsBlock>
             </div>
         </section>
 
@@ -215,8 +215,6 @@ export default {
         openStatsCard() {
             this.showTable = false;
             this.showStats = true;
-
-            console.log(this.showStats)
         },
 
         onAppend() {
