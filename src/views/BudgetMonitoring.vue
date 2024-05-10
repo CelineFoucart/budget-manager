@@ -58,7 +58,7 @@
                     </thead>
                     <tbody>
                         <tr :class="{'isPassed': record.isPassed === true}" v-for="record in recordStore.records" :key="record._id">
-                            <td>{{ record.date }}</td>
+                            <td>{{ formatDateTime(record.date) }}</td>
                             <td>{{ record.title }}</td>
                             <td>
                                 <span v-if="recordStore.categories[record.category]">
@@ -162,6 +162,10 @@ export default {
     },
 
     methods: {
+        formatDateTime(value) {
+            return dayjs(value).format('DD/MM/YYYY')
+        },
+
         async getRecords() {
             const date = new Date(this.date.year, this.date.month, 1)
             const minDate = dayjs(date).startOf('month').format('YYYY-MM-DD')

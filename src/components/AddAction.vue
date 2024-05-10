@@ -134,7 +134,7 @@ export default {
 
             let status = false;
             if (this.data._id === null) {
-                const currentDateString = this.currentDate.year + '-' + `${this.currentDate.month}`.padStart(2, '0');
+                const currentDateString = this.currentDate.year + '-' + `${this.currentDate.month+1}`.padStart(2, '0');
                 const withInsert = data.date.startsWith(currentDateString);
                 status = await this.recordStore.appendRecord(data, withInsert);
             } else {

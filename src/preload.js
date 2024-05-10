@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld('frame', {
     },
 
     findRecords: async (minDate, maxDate) => {
-        return await db.records.findAsync({$and: [{ date: { $gte: minDate } }, { date: { $lte: maxDate } }]});
+        return await db.records.findAsync({$and: [{ date: { $gte: minDate } }, { date: { $lte: maxDate } }]}).sort({ date: 1 });
     },
 
     appendRecord: async (data) => {
