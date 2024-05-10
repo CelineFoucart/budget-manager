@@ -24,9 +24,10 @@ contextBridge.exposeInMainWorld('frame', {
     },
 
     removeRecord: async (recordId) => {
-        const { numRemoved } = await db.records.removeAsync({ _id: recordId }, {});
+        await db.records.removeAsync({ _id: recordId }, {});
+        await db.records.loadDatabase();
 
-        return numRemoved > 0;
+        return true;
     },
 
     updateRecord: async (data, recordId) => {

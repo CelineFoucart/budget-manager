@@ -81,7 +81,7 @@
                                     <button class="btn btn-primary btn-sm" title="Editer" @click="onEdit(record)">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
-                                    <button class="btn btn-danger btn-sm" title="Supprimer">
+                                    <button class="btn btn-danger btn-sm" title="Supprimer" @click="onDelete(record)">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </div>
@@ -92,6 +92,13 @@
             </div>
         </section>
         <AddAction :data="dataToHandle" :currentDate="date" @on-close="openEditModal = false" v-if="openEditModal"></AddAction>
+        <Delete 
+            :title="dataToHandle.title" 
+            :loading="loading" 
+            @on-close="openDeleteModal = false" 
+            @on-confirm="performDelete"
+            v-if="openDeleteModal">
+        </Delete>
     </article>
 </template>
 
@@ -104,14 +111,16 @@ import 'dayjs/locale/fr'
 import { useRecordStore } from "../stores/record.js";
 import { mapStores } from 'pinia';
 import { createToastify } from '@/helper/toastify.js'
-import AddAction from '@/components/AddAction.vue'
+import AddAction from '@/components/AddAction.vue';
+import Delete from '@/helper/Delete.vue';
 
 export default {
     name: 'BudgetMonitoring',
 
     components: {
         VueDatePicker,
-        AddAction
+        AddAction,
+        Delete
     },
 
     data() {
@@ -122,7 +131,9 @@ export default {
             },
             fr: fr,
             dataToHandle: { title: '', date: null, category: null, amount: 0, isPassed: false, isChecked: false },
-            openEditModal: false
+            openEditModal: false,
+            openDeleteModal: false,
+            loading: false
         }
     },
 
@@ -170,6 +181,26 @@ export default {
         onEdit(record) {
             this.dataToHandle = record;
             this.openEditModal = true;
+        },
+
+        onDelete(record) {
+            this.dataToHandle = record;
+            this.openDeleteModal = true;
+        },
+
+        async performDelete() {
+            this.loading = true;
+            
+            const status = this.recordStore.removeRecord(this.dataToHandle._id);
+            if (status) {
+                createToastify("L'élément a été supprimé", 'success');
+            }  else {
+                createToastify("L'opération a échoué", 'error');
+            }
+            
+            this.loading = false;
+            this.openDeleteModal = false;
+            this.dataToHandle = { _id: null, title: '', date: null, category: null, amount: 0, isPassed: false, isChecked: false };
         }
     },
 }
