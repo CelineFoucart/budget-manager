@@ -34,24 +34,12 @@
                 </div>
             </div>
         </div>
-
-        <div class="col-12">
-            <h3 class="mt-3 h5 border text-center bg-light text-uppercase py-2 py-1">Ce mois-ci</h3>
-        </div>
         <div class="col-md-6 col-lg-7">
             <!-- par catégorie -->
+            <Bar :data="byCategories" :options="options"></Bar>
         </div>
         <div class="col-md-6 col-lg-5">
             <Pie :data="pieData" :options="options" :style="styles" />
-        </div>
-        <div class="col-12">
-            <h3 class="h5 mt-3 h5 border text-center bg-light text-uppercase py-2 py-1">Le mois précédent</h3>
-        </div>
-        <div class="col-md-6">
-            <!-- par catégorie -->
-        </div>
-        <div class="col-md-6">
-            <!-- camembert dépense vs revenue -->
         </div>
     </div>
 </template>
@@ -61,15 +49,16 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
 import { useRecordStore } from "../stores/record.js";
 import { mapStores } from 'pinia';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Pie } from 'vue-chartjs';
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title, BarElement, CategoryScale, LinearScale } from 'chart.js';
+import { Pie, Bar } from 'vue-chartjs';
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
 export default {
     name: 'StatsBlock',
 
     components: {
         Pie,
+        Bar
     },
 
     props: {
@@ -109,6 +98,45 @@ export default {
                     {
                         backgroundColor: ['#dc3545', '#198754'],
                         data: [Math.abs(this.recordStore.monthlyExpense), this.recordStore.monthlyRevenue]
+                    }
+                ]
+            }
+        },
+
+        byCategories() {
+            const data = {}
+            this.recordStore.records.forEach(record => {
+                let category = this.recordStore.categories[record.category] ? this.recordStore.categories[record.category] : null;
+                if (category === null) {
+                    category = {_id: '0', name: 'Sans catégorie'}
+                }
+
+                if (!(category._id in data)) {
+                    data[category._id] = {
+                        amount: 0,
+                        label: category.name
+                    };
+                }
+
+                data[category._id].amount += parseFloat(record.amount);
+            });
+
+            const labels = [];
+            const amounts = [];
+
+            for (const key in data) {
+                let label = data[key].label.charAt(0).toUpperCase() + data[key].label.slice(1);
+                amounts.push(data[key].amount);
+                labels.push(label);
+            }
+
+            return {
+                labels: labels,
+                datasets: [
+                    {
+                        label: this.currentMonth,
+                        backgroundColor: '#f87979',
+                        data: amounts
                     }
                 ]
             }
