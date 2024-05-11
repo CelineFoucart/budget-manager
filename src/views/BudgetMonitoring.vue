@@ -80,6 +80,22 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td>{{ firstDay }}</td>
+                            <td>Solde au début du mois</td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <span :class="recordStore.startingSold <= 0 ? 'text-danger' : 'text-success'">
+                                    {{ recordStore.startingSold }}
+                                </span>
+                            </td>
+                            <td>{{ recordStore.startingSold }}</td>
+                            <td>
+                                <span class="badge bg-success">Oui</span>
+                            </td>
+                            <td></td>
+                        </tr>
                         <tr :class="{'isPassed': record.isPassed === true}" v-for="record in recordStore.records" :key="record._id">
                             <td>{{ formatDateTime(record.date) }}</td>
                             <td>{{ record.title }}</td>
@@ -94,7 +110,7 @@
                             <td>
                                 <span class="text-success" v-if="record.amount > 0">{{ record.amount }}</span>
                             </td>
-                            <td></td>
+                            <td>{{ record.sold }}</td>
                             <td>
                                 <span class="badge bg-success" v-if="record.isChecked === true">Oui</span>
                                 <span class="badge bg-danger" v-if="record.isChecked === false">Non</span>
@@ -173,6 +189,12 @@ export default {
         currentMonth() {
             const date = new Date(this.date.year, this.date.month, 1)
             return dayjs(date).locale('fr').format('MMMM YYYY');
+        },
+
+        firstDay() {
+            const date = new Date(this.date.year, this.date.month, 1);
+            
+            return dayjs(date).locale('fr').format('DD/MM/YYYY');
         }
     },
 
@@ -193,9 +215,11 @@ export default {
 
     methods: {
         async getRecords() {
-            const date = new Date(this.date.year, this.date.month, 1)
-            const minDate = dayjs(date).startOf('month').format('YYYY-MM-DD')
-            const maxDate = dayjs(date).endOf('month').format('YYYY-MM-DD')
+            const date = new Date(this.date.year, this.date.month, 1);
+            const minDate = dayjs(date).startOf('month').format('YYYY-MM-DD');
+            const maxDate = dayjs(date).endOf('month').format('YYYY-MM-DD');
+
+            await this.recordStore.getStartingSold(minDate);
 
             const status = await this.recordStore.getRecords(minDate, maxDate);
             if (status === false) {

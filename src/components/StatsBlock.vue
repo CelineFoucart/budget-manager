@@ -72,7 +72,8 @@ export default {
                 maintainAspectRatio: false
             },
             styles: {
-                width: '450px'
+                width: '554px',
+                height: '456px'
             }
         }
     },

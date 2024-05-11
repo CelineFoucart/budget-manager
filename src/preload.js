@@ -15,6 +15,21 @@ contextBridge.exposeInMainWorld('frame', {
         return await db.categories.findAsync({});
     },
 
+    findSold: async (maxDate) => {
+        let sold = 0;
+        const docs = await db.records.findAsync({$and: [{ date: { $lt: maxDate } }]});
+
+        if (docs.length === 0) {
+            return sold;
+        }
+
+        docs.forEach(record => {
+            sold += parseFloat(record.amount);
+        });
+
+        return sold;
+    },
+
     findRecords: async (minDate, maxDate) => {
         return await db.records.findAsync({$and: [{ date: { $gte: minDate } }, { date: { $lte: maxDate } }]}).sort({ date: 1 });
     },
