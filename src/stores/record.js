@@ -110,7 +110,6 @@ export const useRecordStore = defineStore('record', {
 
                 return true;
             } catch (error) {
-                console.log(error)
                 return false;
             }
         }

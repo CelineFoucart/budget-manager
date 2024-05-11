@@ -6,7 +6,7 @@
                     <h2 class="small text-uppercase">
                         Revenus du mois
                     </h2>
-                    <div class="fs-2">{{ this.recordStore.monthlyRevenue }} €</div>
+                    <div class="fs-2">{{ currencyFormat(this.recordStore.monthlyRevenue) }}</div>
                 </div>
             </div>
         </div>
@@ -16,7 +16,7 @@
                     <h2 class="small text-uppercase">
                         Dépense du mois
                     </h2>
-                    <div class="fs-2">{{ this.recordStore.monthlyExpense }} €</div>
+                    <div class="fs-2">{{ currencyFormat(this.recordStore.monthlyExpense) }}</div>
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@
                     <div class="fs-2">
                         <i class="text-primary fa-solid fa-triangle-exclamation fa-fw" v-if="left <= 0"></i>
                         <i class="text-primary fa-solid fa-circle-check fa-fw" v-else></i>
-                        {{ left }} €
+                        {{ currencyFormat(left) }}
                     </div>
                 </div>
             </div>
@@ -141,6 +141,14 @@ export default {
                     }
                 ]
             }
+        }
+    },
+
+    methods: {
+        currencyFormat(amount) {
+            const euroFormat = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+
+            return euroFormat.format(amount);
         }
     },
 }

@@ -12,7 +12,31 @@ contextBridge.exposeInMainWorld('frame', {
     reduceApp: () => ipcRenderer.send('reduceApp'),
     
     findCategories: async () => {
-        return await db.categories.findAsync({});
+        return await db.categories.findAsync({}).sort({ name: 1 });
+    },
+
+    appendCategory: async (data) => {
+        return await db.categories.insertAsync(data);
+    },
+
+    updateCategory: async (data, categoryId) => {
+        await db.categories.updateAsync({ _id: categoryId }, {$set: data}, {upsert: true});
+        await db.categories.loadDatabase();
+
+        return true;
+    },
+
+    removeCategory: async (categoryId) => {
+        const count = await db.records.countAsync({ category: categoryId })
+
+        if (count !== 0) {
+            return false;
+        }
+
+        await db.categories.removeAsync({ _id: categoryId }, {});
+        await db.categories.loadDatabase();
+
+        return true;
     },
 
     findSold: async (maxDate) => {

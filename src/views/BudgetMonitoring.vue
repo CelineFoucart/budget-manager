@@ -66,81 +66,83 @@
                 </div>
             </header>
             <div class="card-body">
-                <div class="row mb-2 align-items-center">
-                    <div class="col-7">
-                        Affichage de 
-                        <span v-if="records.length < recordStore.records.length"><strong>{{ records.length }}</strong> sur </span>
-                        <strong>{{ recordStore.records.length }}</strong>
-                        élément{{ recordStore.records.length > 1 ? 's' : '' }}
-                    </div>
-                    <div class="col-5">
-                        <div class="input-group">
-                            <div class="input-group-text">
-                                <label for="search">
-                                    <i class="fa-solid fa-magnifying-glass fa-fw"></i> Recherche
-                                </label>
+                <div v-if="showTable === true">
+                    <div class="row mb-2 align-items-center">
+                        <div class="col-7">
+                            Affichage de 
+                            <span v-if="records.length < recordStore.records.length"><strong>{{ records.length }}</strong> sur </span>
+                            <strong>{{ recordStore.records.length }}</strong>
+                            élément{{ recordStore.records.length > 1 ? 's' : '' }}
+                        </div>
+                        <div class="col-5">
+                            <div class="input-group">
+                                <div class="input-group-text">
+                                    <label for="search">
+                                        <i class="fa-solid fa-magnifying-glass fa-fw"></i> Recherche
+                                    </label>
+                                </div>
+                                <input type="text" class="form-control" v-model="query" id="search">
                             </div>
-                            <input type="text" class="form-control" v-model="query" id="search">
                         </div>
                     </div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-gray"><i class="fa fa-calendar fa-fw"></i> Date</th>
+                                <th class="text-gray"><i class="fa fa-file fa-fw"></i> Libellé</th>
+                                <th class="text-gray"><i class="fa fa-tag fa-fw"></i> Catégorie</th>
+                                <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Débit</th>
+                                <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Crédit</th>
+                                <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Solde</th>
+                                <th class="text-gray"><i class="fa fa-check fa-fw"></i> Vérifié</th>
+                                <th class="text-gray"><i class="fa fa-edit fa-fw"></i> Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fw-bold">
+                                <td class="bg-info-subtle">{{ firstDay }}</td>
+                                <td class="bg-info-subtle" colspan="4">Solde au début du mois</td>
+                                <td class="bg-info-subtle">{{ currencyFormat(recordStore.startingSold) }}</td>
+                                <td class="bg-info-subtle"></td>
+                                <td class="bg-info-subtle"></td>
+                            </tr>
+                            <tr :class="{'isPassed': record.isPassed === true}" v-for="record in records" :key="record._id">
+                                <td>{{ formatDateTime(record.date) }}</td>
+                                <td>{{ record.title }}</td>
+                                <td>
+                                    <span v-if="recordStore.categories[record.category]">
+                                        {{ recordStore.categories[record.category].name }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-danger" v-if="record.amount <= 0">
+                                        {{ currencyFormat(record.amount) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-success" v-if="record.amount > 0">
+                                        {{ currencyFormat(record.amount) }}
+                                    </span>
+                                </td>
+                                <td>{{currencyFormat(record.sold) }}</td>
+                                <td>
+                                    <span class="badge bg-success" v-if="record.isChecked === true">Oui</span>
+                                    <span class="badge bg-danger" v-if="record.isChecked === false">Non</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-primary btn-sm" title="Editer" @click="onEdit(record)">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" title="Supprimer" @click="onDelete(record)">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <table class="table table-bordered" v-if="showTable === true">
-                    <thead>
-                        <tr>
-                            <th class="text-gray"><i class="fa fa-calendar fa-fw"></i> Date</th>
-                            <th class="text-gray"><i class="fa fa-file fa-fw"></i> Libellé</th>
-                            <th class="text-gray"><i class="fa fa-tag fa-fw"></i> Catégorie</th>
-                            <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Débit</th>
-                            <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Crédit</th>
-                            <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Solde</th>
-                            <th class="text-gray"><i class="fa fa-check fa-fw"></i> Vérifié</th>
-                            <th class="text-gray" data-orderable="false"><i class="fa fa-edit fa-fw"></i> Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="fw-bold">
-                            <td class="bg-info-subtle">{{ firstDay }}</td>
-                            <td class="bg-info-subtle" colspan="4">Solde au début du mois</td>
-                            <td class="bg-info-subtle">{{ currencyFormat(recordStore.startingSold) }}</td>
-                            <td class="bg-info-subtle"></td>
-                            <td class="bg-info-subtle"></td>
-                        </tr>
-                        <tr :class="{'isPassed': record.isPassed === true}" v-for="record in records" :key="record._id">
-                            <td>{{ formatDateTime(record.date) }}</td>
-                            <td>{{ record.title }}</td>
-                            <td>
-                                <span v-if="recordStore.categories[record.category]">
-                                    {{ recordStore.categories[record.category].name }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="text-danger" v-if="record.amount <= 0">
-                                    {{ currencyFormat(record.amount) }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="text-success" v-if="record.amount > 0">
-                                    {{ currencyFormat(record.amount) }}
-                                </span>
-                            </td>
-                            <td>{{currencyFormat(record.sold) }}</td>
-                            <td>
-                                <span class="badge bg-success" v-if="record.isChecked === true">Oui</span>
-                                <span class="badge bg-danger" v-if="record.isChecked === false">Non</span>
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-primary btn-sm" title="Editer" @click="onEdit(record)">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" title="Supprimer" @click="onDelete(record)">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
                 
                 <StatsBlock :currentDate="date" v-if="showStats === true"></StatsBlock>
             </div>
