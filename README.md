@@ -18,9 +18,12 @@ npm electron:build --win
 ```
 
 ### Lints and fixes files
+
 ```
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Licence
+
+Distribué sous la licence MIT. Voir `LICENSE` pour plus d'information.
+
