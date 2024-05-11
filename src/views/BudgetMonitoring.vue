@@ -66,6 +66,24 @@
                 </div>
             </header>
             <div class="card-body">
+                <div class="row mb-2 align-items-center">
+                    <div class="col-7">
+                        Affichage de 
+                        <span v-if="records.length < recordStore.records.length"><strong>{{ records.length }}</strong> sur </span>
+                        <strong>{{ recordStore.records.length }}</strong>
+                        élément{{ recordStore.records.length > 1 ? 's' : '' }}
+                    </div>
+                    <div class="col-5">
+                        <div class="input-group">
+                            <div class="input-group-text">
+                                <label for="search">
+                                    <i class="fa-solid fa-magnifying-glass fa-fw"></i> Recherche
+                                </label>
+                            </div>
+                            <input type="text" class="form-control" v-model="query" id="search">
+                        </div>
+                    </div>
+                </div>
                 <table class="table table-bordered" v-if="showTable === true">
                     <thead>
                         <tr>
@@ -80,23 +98,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>{{ firstDay }}</td>
-                            <td>Solde au début du mois</td>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <span :class="recordStore.startingSold <= 0 ? 'text-danger' : 'text-success'">
-                                    {{ recordStore.startingSold }}
-                                </span>
-                            </td>
-                            <td>{{ recordStore.startingSold }}</td>
-                            <td>
-                                <span class="badge bg-success">Oui</span>
-                            </td>
-                            <td></td>
+                        <tr class="fw-bold">
+                            <td class="bg-info-subtle">{{ firstDay }}</td>
+                            <td class="bg-info-subtle" colspan="4">Solde au début du mois</td>
+                            <td class="bg-info-subtle">{{ currencyFormat(recordStore.startingSold) }}</td>
+                            <td class="bg-info-subtle"></td>
+                            <td class="bg-info-subtle"></td>
                         </tr>
-                        <tr :class="{'isPassed': record.isPassed === true}" v-for="record in recordStore.records" :key="record._id">
+                        <tr :class="{'isPassed': record.isPassed === true}" v-for="record in records" :key="record._id">
                             <td>{{ formatDateTime(record.date) }}</td>
                             <td>{{ record.title }}</td>
                             <td>
@@ -105,12 +114,16 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="text-danger" v-if="record.amount <= 0">{{ record.amount }}</span>
+                                <span class="text-danger" v-if="record.amount <= 0">
+                                    {{ currencyFormat(record.amount) }}
+                                </span>
                             </td>
                             <td>
-                                <span class="text-success" v-if="record.amount > 0">{{ record.amount }}</span>
+                                <span class="text-success" v-if="record.amount > 0">
+                                    {{ currencyFormat(record.amount) }}
+                                </span>
                             </td>
-                            <td>{{ record.sold }}</td>
+                            <td>{{currencyFormat(record.sold) }}</td>
                             <td>
                                 <span class="badge bg-success" v-if="record.isChecked === true">Oui</span>
                                 <span class="badge bg-danger" v-if="record.isChecked === false">Non</span>
@@ -173,6 +186,7 @@ export default {
                 month: new Date().getMonth(),
                 year: new Date().getFullYear()
             },
+            query: null,
             fr: fr,
             dataToHandle: { title: '', date: null, category: null, amount: 0, isPassed: false, isChecked: false },
             openEditModal: false,
@@ -195,6 +209,27 @@ export default {
             const date = new Date(this.date.year, this.date.month, 1);
             
             return dayjs(date).locale('fr').format('DD/MM/YYYY');
+        },
+
+        records() {
+            const records = [];
+
+            this.recordStore.records.forEach(record => {
+                if (this.query === null || this.query.length === 0) {
+                    records.push(record);
+                } else {
+                    let value = (record.title) + record.amount;
+                    if (this.recordStore.categories[record.category]) {
+                        value += this.recordStore.categories[record.category].name;
+                    }
+
+                    if (value.toLowerCase().indexOf(this.query.toLowerCase()) != -1) {
+                        records.push(record);
+                    }
+                }
+            });
+
+            return records;
         }
     },
 
@@ -229,6 +264,12 @@ export default {
 
         formatDateTime(value) {
             return dayjs(value).format('DD/MM/YYYY')
+        },
+
+        currencyFormat(amount) {
+            const euroFormat = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+
+            return euroFormat.format(amount);
         },
 
         openTableCard() {
