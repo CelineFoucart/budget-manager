@@ -99,12 +99,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="fw-bold">
-                                <td class="bg-info-subtle">{{ firstDay }}</td>
-                                <td class="bg-info-subtle" colspan="4">Solde au début du mois</td>
-                                <td class="bg-info-subtle">{{ currencyFormat(recordStore.startingSold) }}</td>
-                                <td class="bg-info-subtle"></td>
-                                <td class="bg-info-subtle"></td>
+                            <tr class="fw-bold bg-sold">
+                                <td>{{ firstDay }}</td>
+                                <td colspan="4">Solde au début du mois</td>
+                                <td class="text-end">{{ currencyFormat(recordStore.startingSold) }}</td>
+                                <td></td>
+                                <td></td>
                             </tr>
                             <tr :class="{'isPassed': record.isPassed === true}" v-for="record in records" :key="record._id">
                                 <td>{{ formatDateTime(record.date) }}</td>
@@ -114,17 +114,17 @@
                                         {{ recordStore.categories[record.category].name }}
                                     </span>
                                 </td>
-                                <td>
+                                <td class="text-end">
                                     <span class="text-danger" v-if="record.amount <= 0">
                                         {{ currencyFormat(record.amount) }}
                                     </span>
                                 </td>
-                                <td>
+                                <td class="text-end">
                                     <span class="text-success" v-if="record.amount > 0">
                                         {{ currencyFormat(record.amount) }}
                                     </span>
                                 </td>
-                                <td>{{currencyFormat(record.sold) }}</td>
+                                <td class="text-end">{{currencyFormat(record.sold) }}</td>
                                 <td>
                                     <span class="badge bg-success" v-if="record.isChecked === true">Oui</span>
                                     <span class="badge bg-danger" v-if="record.isChecked === false">Non</span>
@@ -338,5 +338,9 @@ export default {
 <style>
 .isPassed > td {
     background-color: #f8f9fa;
+}
+
+.bg-sold td {
+    background-color: #7f9ffd29;
 }
 </style>

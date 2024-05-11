@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="row align-items-center">
         <div class="col-4">
             <div class="card border-0 alert p-0 alert-success border-start border-3 border-success shadow-sm">
                 <div class="card-body">
@@ -34,11 +34,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-7">
+        <div class="col-lg-7">
             <!-- par catégorie -->
-            <Bar :data="byCategories" :options="options"></Bar>
+            <Bar :data="byCategories" :options="options" :style="stylesBar"></Bar>
         </div>
-        <div class="col-md-6 col-lg-5">
+        <div class="col-lg-5">
             <Pie :data="pieData" :options="options" :style="styles" />
         </div>
     </div>
@@ -68,12 +68,15 @@ export default {
     data() {
         return {
             options: {
-                responsive: true,
-                maintainAspectRatio: false
+                responsive: false,
+                maintainAspectRatio: true,
+                indexAxis: 'y',
+            },
+            stylesBar: {
+                width: '100%',
             },
             styles: {
-                width: '554px',
-                height: '456px'
+                width: '100%'
             }
         }
     },
