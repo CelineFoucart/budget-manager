@@ -13,9 +13,12 @@ npm run electron:serve
 ### Build the app
 ```
 npm run electron:build
-npm electron:build --linux
-npm electron:build --win
 ```
+
+En cas d'erreur :
+````bash
+$env:NODE_OPTIONS = "--openssl-legacy-provider"
+``
 
 ### Lints and fixes files
 

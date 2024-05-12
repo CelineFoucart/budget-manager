@@ -137,8 +137,8 @@ ipcMain.on('closeApp', () => {
 })
 
 // set up database if it is empty
-if (fs.existsSync(`../data/categories.db`) === false) {
+if (fs.existsSync(`data/categories.db`) === false) {
     const Datastore = require('@seald-io/nedb');
-    const db = new Datastore({ filename: '../data/categories.db', autoload: true });
+    const db = new Datastore({ filename: 'data/categories.db', autoload: true });
     db.insert([{name: 'alimentaire'}, {name: 'salaires'}, {name: 'charges'}]);
 }

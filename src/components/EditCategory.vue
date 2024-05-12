@@ -17,11 +17,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" @click="close">
-                        <i class="fa-solid fa-xmark fa-fw"></i>
-                        Fermer
+                        Annuler
                     </button>
                     <button type="button" class="btn btn-success btn-sm"  data-bs-dismiss="modal" @click.prevent="save">
-                        <i class="fa-solid fa-floppy-disk fa-fw"></i>
                         Sauvegarder
                     </button>
                 </div>

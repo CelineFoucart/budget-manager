@@ -13,13 +13,11 @@
                         Sur cette page, les recettes et les dépenses sont affichées, mois par mois.
                         Cliquer sur le bouton à droite pour en ajouter une.
                     </p>
-                    <ul class="fa-ul">
+                    <ul>
                         <li>
-                            <span class="fa-li"><i class="fa-solid fa-table"></i></span>
                             <span>Sur l'onglet tableau, les lignes en gris sont des montants déclarés comme passés en banque.</span>
                         </li>
                         <li>
-                            <span class="fa-li"><i class="fa-solid fa-chart-pie fa-fw"></i> </span>
                             <span>Sur l'onglet graphique figure les statistiques du mois.</span>
                         </li>
                     </ul>
@@ -27,7 +25,11 @@
             </div>
 
             <div class="d-flex gap-2 justify-content-end">
-                <button @click="previousMonth" class="btn-sm btn btn-primary"><i class="fa fa-chevron-left fa-fw"></i></button>
+                <button @click="previousMonth" class="btn-sm btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                    </svg>
+                </button>
                 <div class="w-25">
                     <VueDatePicker
                         v-model="date"
@@ -39,7 +41,11 @@
                         required
                     />
                 </div>
-                <button @click="nextMonth" class="btn-sm btn btn-primary"><i class="fa fa-chevron-right fa-fw"></i></button>
+                <button @click="nextMonth" class="btn-sm btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                    </svg>
+                </button>
             </div>
         </header>
 
@@ -53,11 +59,15 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="btn-group d-print-none">
-                            <button @click="openTableCard" class="btn btn-sm" :class="{'btn-primary': showTable, 'btn-outline-primary': showStats}" title="Tableau">
-                                <i class="fa-solid fa-table"></i>
+                            <button @click="openTableCard" class="btn btn-sm pb-2" :class="{'btn-primary': showTable, 'btn-outline-primary': showStats}" title="Tableau">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-table" viewBox="0 0 16 16">
+                                    <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 2h-4v3h4zm0 4h-4v3h4zm0 4h-4v3h3a1 1 0 0 0 1-1zm-5 3v-3H6v3zm-5 0v-3H1v2a1 1 0 0 0 1 1zm-4-4h4V8H1zm0-4h4V4H1zm5-3v3h4V4zm4 4H6v3h4z"/>
+                                </svg>
                             </button>
-                            <button @click="openStatsCard" class="btn btn-sm" :class="{'btn-primary': showStats, 'btn-outline-primary': showTable}" title="Statistiques">
-                                <i class="fa-solid fa-chart-pie"></i>
+                            <button @click="openStatsCard" class="btn btn-sm pb-2" :class="{'btn-primary': showStats, 'btn-outline-primary': showTable}" title="Statistiques">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pie-chart-fill" viewBox="0 0 16 16">
+                                    <path d="M15.985 8.5H8.207l-5.5 5.5a8 8 0 0 0 13.277-5.5zM2 13.292A8 8 0 0 1 7.5.015v7.778zM8.5.015V7.5h7.485A8 8 0 0 0 8.5.015"/>
+                                </svg>
                             </button>
                         </div>
                     </div>
@@ -76,27 +86,43 @@
                             <div class="input-group">
                                 <div class="input-group-text">
                                     <label for="search">
-                                        <i class="fa-solid fa-magnifying-glass fa-fw"></i> Recherche
+                                        Recherche
                                     </label>
                                 </div>
                                 <input type="text" class="form-control" v-model="query" id="search">
                             </div>
                             <button class="btn btn-primary text-nowrap" @click="onAppend">
-                                <i class="fa fa-plus fa-fw"></i> Ajouter
+                                Ajouter
                             </button>
                         </div>
                     </div>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th class="text-gray"><i class="fa fa-calendar fa-fw"></i> Date</th>
-                                <th class="text-gray"><i class="fa fa-file fa-fw"></i> Libellé</th>
-                                <th class="text-gray"><i class="fa fa-tag fa-fw"></i> Catégorie</th>
-                                <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Débit</th>
-                                <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Crédit</th>
-                                <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Solde</th>
-                                <th class="text-gray"><i class="fa fa-check fa-fw"></i> Vérifié</th>
-                                <th class="text-gray d-print-none"><i class="fa fa-edit fa-fw"></i> Actions</th>
+                                <th class="text-gray">
+                                    Date
+                                </th>
+                                <th class="text-gray">
+                                    Libellé
+                                </th>
+                                <th class="text-gray">
+                                    Catégorie
+                                </th>
+                                <th class="text-gray">
+                                    Débit
+                                </th>
+                                <th class="text-gray">
+                                    Crédit
+                                </th>
+                                <th class="text-gray"> 
+                                    Solde
+                                </th>
+                                <th class="text-gray">
+                                Vérifié
+                                </th>
+                                <th class="text-gray d-print-none"> 
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -132,11 +158,15 @@
                                 </td>
                                 <td class="d-print-none">
                                     <div class="btn-group">
-                                        <button class="btn btn-primary btn-sm" title="Editer" @click="onEdit(record)">
-                                            <i class="fa-solid fa-pen"></i>
+                                        <button class="btn btn-primary btn-sm pb-2" title="Editer" @click="onEdit(record)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+                                            </svg>
                                         </button>
-                                        <button class="btn btn-danger btn-sm" title="Supprimer" @click="onDelete(record)">
-                                            <i class="fa fa-trash"></i>
+                                        <button class="btn btn-danger btn-sm pb-2" title="Supprimer" @click="onDelete(record)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                                            </svg>
                                         </button>
                                     </div>
                                 </td>
@@ -149,7 +179,6 @@
             </div>
             <footer class="card-footer d-print-none text-end" v-if="showTable === true">
                 <button class="btn btn-primary" @click="exportToPdf">
-                    <i class="fa fa-download fa-fw"></i>
                     Exporter en PDF
                 </button>
             </footer>

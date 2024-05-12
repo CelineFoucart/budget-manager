@@ -27,6 +27,10 @@ export default {
       year: new Date()
     }
   },
+
+  mounted () {
+    this.$router.push('/');
+  },
 }
 </script>
 

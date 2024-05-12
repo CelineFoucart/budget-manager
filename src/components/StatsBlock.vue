@@ -27,8 +27,6 @@
                         Reste pour ce mois
                     </h2>
                     <div class="fs-2">
-                        <i class="text-primary fa-solid fa-triangle-exclamation fa-fw" v-if="left <= 0"></i>
-                        <i class="text-primary fa-solid fa-circle-check fa-fw" v-else></i>
                         {{ currencyFormat(left) }}
                     </div>
                 </div>
