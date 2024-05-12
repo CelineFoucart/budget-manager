@@ -1,14 +1,12 @@
 <template>
     <article>
-        <header class="mb-2">
+        <header class="mb-2 d-print-none">
             <div class="row align-items-center mb-3">
                 <div class="col-md-6 col-lg-8">
                     <h1 class="display-5 text-gray">Suivi de trésorerie</h1>
                 </div>
                 <div class="col-md-6 col-lg-4 text-end">
-                    <button class="btn btn-primary" @click="onAppend">
-                        <i class="fa fa-plus fa-fw"></i> Ajouter
-                    </button>
+                    
                 </div>
                 <div class="col-12 pt-2">
                     <p>
@@ -54,7 +52,7 @@
                         </h2>
                     </div>
                     <div class="col-4 text-end">
-                        <div class="btn-group">
+                        <div class="btn-group d-print-none">
                             <button @click="openTableCard" class="btn btn-sm" :class="{'btn-primary': showTable, 'btn-outline-primary': showStats}" title="Tableau">
                                 <i class="fa-solid fa-table"></i>
                             </button>
@@ -68,13 +66,13 @@
             <div class="card-body">
                 <div v-if="showTable === true">
                     <div class="row mb-2 align-items-center">
-                        <div class="col-7">
+                        <div class="col-6">
                             Affichage de 
                             <span v-if="records.length < recordStore.records.length"><strong>{{ records.length }}</strong> sur </span>
                             <strong>{{ recordStore.records.length }}</strong>
                             élément{{ recordStore.records.length > 1 ? 's' : '' }}
                         </div>
-                        <div class="col-5">
+                        <div class="col-6 d-print-none d-flex gap-2">
                             <div class="input-group">
                                 <div class="input-group-text">
                                     <label for="search">
@@ -83,6 +81,9 @@
                                 </div>
                                 <input type="text" class="form-control" v-model="query" id="search">
                             </div>
+                            <button class="btn btn-primary text-nowrap" @click="onAppend">
+                                <i class="fa fa-plus fa-fw"></i> Ajouter
+                            </button>
                         </div>
                     </div>
                     <table class="table table-bordered">
@@ -95,7 +96,7 @@
                                 <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Crédit</th>
                                 <th class="text-gray"><i class="fa fa-dollar-sign fa-fw"></i> Solde</th>
                                 <th class="text-gray"><i class="fa fa-check fa-fw"></i> Vérifié</th>
-                                <th class="text-gray"><i class="fa fa-edit fa-fw"></i> Actions</th>
+                                <th class="text-gray d-print-none"><i class="fa fa-edit fa-fw"></i> Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -104,7 +105,7 @@
                                 <td colspan="4">Solde au début du mois</td>
                                 <td class="text-end">{{ currencyFormat(recordStore.startingSold) }}</td>
                                 <td></td>
-                                <td></td>
+                                <td class="d-print-none"></td>
                             </tr>
                             <tr :class="{'isPassed': record.isPassed === true}" v-for="record in records" :key="record._id">
                                 <td>{{ formatDateTime(record.date) }}</td>
@@ -129,7 +130,7 @@
                                     <span class="badge bg-success" v-if="record.isChecked === true">Oui</span>
                                     <span class="badge bg-danger" v-if="record.isChecked === false">Non</span>
                                 </td>
-                                <td>
+                                <td class="d-print-none">
                                     <div class="btn-group">
                                         <button class="btn btn-primary btn-sm" title="Editer" @click="onEdit(record)">
                                             <i class="fa-solid fa-pen"></i>
@@ -146,6 +147,12 @@
                 
                 <StatsBlock :currentDate="date" v-if="showStats === true"></StatsBlock>
             </div>
+            <footer class="card-footer d-print-none text-end" v-if="showTable === true">
+                <button class="btn btn-primary" @click="exportToPdf">
+                    <i class="fa fa-download fa-fw"></i>
+                    Exporter en PDF
+                </button>
+            </footer>
         </section>
 
         <AddAction :data="dataToHandle" :currentDate="date" @on-close="openEditModal = false" v-if="openEditModal"></AddAction>
@@ -330,6 +337,13 @@ export default {
             this.loading = false;
             this.openDeleteModal = false;
             this.dataToHandle = { _id: null, title: '', date: null, category: null, amount: 0, isPassed: false, isChecked: false };
+        },
+
+        exportToPdf() {
+            const date = new Date(this.date.year, this.date.month, 1);
+            const suffix = this.showTable ? '-table' : '-chart';
+            const filename = 'export-' + dayjs(date).format('YYYY-MM') + dayjs().format('YYYY-MM-DD') + suffix;
+            window.frame.exportToPdf(filename)
         }
     },
 }

@@ -6,7 +6,8 @@ export const useRecordStore = defineStore('record', {
         categories: {}, 
         monthlyRevenue: 0, 
         monthlyExpense: 0, 
-        startingSold: 0, endingSold: 0 
+        startingSold: 0, 
+        endingSold: 0 
     }),
 
     actions: {
@@ -67,6 +68,18 @@ export const useRecordStore = defineStore('record', {
             try {
                 const newRecord = await window.frame.appendRecord(data);
                 if (withInsert) {
+                    const amount = parseFloat(newRecord.amount)
+                    if (!isNaN(amount)) {
+                        this.endingSold = (this.endingSold + amount);
+                        newRecord.sold = this.endingSold;
+                    
+                        if (amount < 0) {
+                            this.monthlyExpense+= amount;
+                        } else {
+                            this.monthlyRevenue+= amount;
+                        }
+                    }
+
                     this.records.push(newRecord);
                 }
 

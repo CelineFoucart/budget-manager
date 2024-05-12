@@ -1,5 +1,5 @@
 <template>
-    <div class="row align-items-center">
+    <div class="row">
         <div class="col-4">
             <div class="card border-0 alert p-0 alert-success border-start border-3 border-success shadow-sm">
                 <div class="card-body">
@@ -22,7 +22,7 @@
         </div>
         <div class="col-4">
             <div class="card border-0 bg-primary-subtle border-start border-3 border-primary shadow-sm">
-                <div class="card-body ">
+                <div class="card-body">
                     <h2 class="small text-primary text-uppercase">
                         Reste pour ce mois
                     </h2>
@@ -34,6 +34,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row align-items-center">
         <div class="col-lg-7">
             <!-- par catégorie -->
             <Bar :data="byCategories" :options="options" :style="stylesBar"></Bar>

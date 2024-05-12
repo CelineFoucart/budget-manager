@@ -1,5 +1,5 @@
 <template>
-    <nav id="topMenu" class="navbar py-1 navbar-expand navbar-dark bg-dark shadow fixed-top">
+    <nav id="topMenu" class="navbar py-1 navbar-expand navbar-dark bg-dark shadow fixed-top d-print-none">
         <div class="container-fluid">
             <ul class="navbar-nav">
                 <li class="nav-item pe-2">
