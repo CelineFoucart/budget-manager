@@ -1,6 +1,10 @@
 # budget-manager
 
+Small budget manager with charts about the expenses and the revenus of a month and pdf export of the table. This application 
+is developped with vuejs and electron.
+
 ## Project setup
+
 ```
 npm install
 ```
@@ -11,14 +15,15 @@ npm run electron:serve
 ```
 
 ### Build the app
+
 ```
 npm run electron:build
 ```
 
-En cas d'erreur :
-````bash
+In case of error during the build:
+```bash
 $env:NODE_OPTIONS = "--openssl-legacy-provider"
-``
+```
 
 ### Lints and fixes files
 
@@ -26,7 +31,10 @@ $env:NODE_OPTIONS = "--openssl-legacy-provider"
 npm run lint
 ```
 
+## TODO
+* Ajouter le bouton duplication d'une ligne.
+
 ## Licence
 
-Distribué sous la licence MIT. Voir `LICENSE` pour plus d'information.
+Distributed under MIT License. See `LICENSE` for more information.
 

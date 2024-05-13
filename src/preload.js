@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('frame', {
     sizeApp: () => ipcRenderer.send('sizeApp'),
     reduceApp: () => ipcRenderer.send('reduceApp'),
     exportToPdf: (filename) => ipcRenderer.send('exportPdf', filename),
+    refresh: () => ipcRenderer.send('on-reload'),
     
     findCategories: async () => {
         return await db.categories.findAsync({}).sort({ name: 1 });

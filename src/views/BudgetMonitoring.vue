@@ -75,14 +75,13 @@
             </header>
             <div class="card-body">
                 <div v-if="showTable === true">
-                    <div class="row mb-2 align-items-center">
+                    <div class="row mb-2 align-items-center d-print-none">
                         <div class="col-6">
-                            Affichage de 
-                            <span v-if="records.length < recordStore.records.length"><strong>{{ records.length }}</strong> sur </span>
-                            <strong>{{ recordStore.records.length }}</strong>
-                            élément{{ recordStore.records.length > 1 ? 's' : '' }}
+                            <button class="btn btn-primary text-nowrap" @click="onAppend">
+                                Ajouter
+                            </button>
                         </div>
-                        <div class="col-6 d-print-none d-flex gap-2">
+                        <div class="col-6 d-flex gap-2">
                             <div class="input-group">
                                 <div class="input-group-text">
                                     <label for="search">
@@ -91,38 +90,19 @@
                                 </div>
                                 <input type="text" class="form-control" v-model="query" id="search">
                             </div>
-                            <button class="btn btn-primary text-nowrap" @click="onAppend">
-                                Ajouter
-                            </button>
                         </div>
                     </div>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th class="text-gray">
-                                    Date
-                                </th>
-                                <th class="text-gray">
-                                    Libellé
-                                </th>
-                                <th class="text-gray">
-                                    Catégorie
-                                </th>
-                                <th class="text-gray">
-                                    Débit
-                                </th>
-                                <th class="text-gray">
-                                    Crédit
-                                </th>
-                                <th class="text-gray"> 
-                                    Solde
-                                </th>
-                                <th class="text-gray">
-                                Vérifié
-                                </th>
-                                <th class="text-gray d-print-none"> 
-                                    Actions
-                                </th>
+                                <th class="text-gray">Date</th>
+                                <th class="text-gray">Libellé</th>
+                                <th class="text-gray">Catégorie</th>
+                                <th class="text-gray">Débit</th>
+                                <th class="text-gray">Crédit</th>
+                                <th class="text-gray">Solde</th>
+                                <th class="text-gray">Vérifié</th>
+                                <th class="text-gray d-print-none">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -173,8 +153,13 @@
                             </tr>
                         </tbody>
                     </table>
+                    <p class="mb-0">
+                        Affichage de 
+                        <span v-if="records.length < recordStore.records.length"><strong>{{ records.length }}</strong> sur </span>
+                        <strong>{{ recordStore.records.length }}</strong>
+                        élément{{ recordStore.records.length > 1 ? 's' : '' }}
+                    </p>
                 </div>
-                
                 <StatsBlock :currentDate="date" v-if="showStats === true"></StatsBlock>
             </div>
             <footer class="card-footer d-print-none text-end" v-if="showTable === true">
@@ -184,7 +169,8 @@
             </footer>
         </section>
 
-        <AddAction :data="dataToHandle" :currentDate="date" @on-close="openEditModal = false" v-if="openEditModal"></AddAction>
+        <AddAction :data="dataToHandle" :currentDate="date" @on-refresh="getRecords" @on-close="openEditModal = false" v-if="openEditModal">
+        </AddAction>
         <Delete 
             :title="dataToHandle.title" 
             :loading="loading" 
@@ -371,7 +357,7 @@ export default {
         exportToPdf() {
             const date = new Date(this.date.year, this.date.month, 1);
             const suffix = this.showTable ? '-table' : '-chart';
-            const filename = 'export-' + dayjs(date).format('YYYY-MM') + dayjs().format('YYYY-MM-DD') + suffix;
+            const filename = 'export-' + dayjs(date).format('YYYY-MM') + '-'+ dayjs().format('YYYY-MM-DD') + suffix;
             window.frame.exportToPdf(filename)
         }
     },

@@ -75,7 +75,7 @@ export default {
         VueDatePicker
     },
 
-    emits: ['on-close'],
+    emits: ['on-close', 'on-refresh'],
 
     props: {
         data: Object,
@@ -104,8 +104,16 @@ export default {
 
     methods: {
         reset() {
+
+            if (this.data.date) {
+                this.date =  this.data.date;
+            } else {
+                const currentMonth = dayjs(new Date(this.currentDate.year, this.currentDate.month, 1));
+                const today = dayjs().format('MM-YYYY');
+                this.date = (currentMonth.format('MM-YYYY') === today) ? new Date() : currentMonth.endOf('month').toDate();
+            }
+
             this.title = this.data.title ? this.data.title : ''
-            this.date =  this.data.date ? this.data.date : new Date()
             this.amount = this.data.amount ? this.data.amount : 0;
             this.category = this.data.category ? this.data.category : null;
             this.isPassed = this.data.amount ? this.data.isPassed : false;
@@ -141,6 +149,7 @@ export default {
             
             if (status) {
                 createToastify("L'élément a été enregistré", 'success');
+                this.$emit('on-refresh');
                 this.close();
             } else {
                 createToastify("L'opération a échoué", 'error');

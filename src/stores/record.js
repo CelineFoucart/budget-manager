@@ -117,8 +117,10 @@ export const useRecordStore = defineStore('record', {
 
                 const index = this.records.findIndex(element => element._id === recordId)
                 if (index !== -1) {
+                    const sold = this.records[index].sold
                     data._id = recordId;
                     this.records[index] = data;
+                    this.records[index].sold = sold;
                 }
 
                 return true;
