@@ -32,7 +32,7 @@ npm run lint
 ```
 
 ## TODO
-* Ajouter le bouton duplication d'une ligne.
+* Page aide ?
 
 ## Licence
 
