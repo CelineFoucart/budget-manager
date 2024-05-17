@@ -42,7 +42,7 @@ contextBridge.exposeInMainWorld('frame', {
     },
 
     findSold: async (maxDate) => {
-        let sold = 0;
+        let sold = { total: 0, inBank: 0 };
         const docs = await db.records.findAsync({$and: [{ date: { $lt: maxDate } }]});
 
         if (docs.length === 0) {
@@ -50,7 +50,10 @@ contextBridge.exposeInMainWorld('frame', {
         }
 
         docs.forEach(record => {
-            sold += parseFloat(record.amount);
+            sold.total += parseFloat(record.amount);
+            if (record.isPassed) {
+                sold.inBank += parseFloat(record.amount);
+            }
         });
 
         return sold;

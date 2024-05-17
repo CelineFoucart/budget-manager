@@ -109,7 +109,7 @@
                             <tr class="fw-bold bg-sold">
                                 <td>{{ firstDay }}</td>
                                 <td colspan="4">Solde au début du mois</td>
-                                <td class="text-end">{{ currencyFormat(recordStore.startingSold) }}</td>
+                                <td class="text-end">{{ currencyFormat(recordStore.startingSold.total) }}</td>
                                 <td></td>
                                 <td class="d-print-none"></td>
                             </tr>
@@ -158,12 +158,23 @@
                             </tr>
                         </tbody>
                     </table>
-                    <p class="mb-0">
-                        Affichage de 
-                        <span v-if="records.length < recordStore.records.length"><strong>{{ records.length }}</strong> sur </span>
-                        <strong>{{ recordStore.records.length }}</strong>
-                        élément{{ recordStore.records.length > 1 ? 's' : '' }}
-                    </p>
+                    <div class="row align-items-center">
+                        <div class="col-7">
+                            <p class="mb-0">
+                                Affichage de 
+                                <span v-if="records.length < recordStore.records.length"><strong>{{ records.length }}</strong> sur </span>
+                                <strong>{{ recordStore.records.length }}</strong>
+                                élément{{ recordStore.records.length > 1 ? 's' : '' }}
+                            </p>
+                        </div>
+                        <div class="col-5 fs-5">
+                            <div class="bg-light border p-1">
+                                <strong class="border-end pe-1">Solde en banque</strong>
+                                {{ currencyFormat(recordStore.inBankSold) }}
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
                 <StatsBlock :currentDate="date" v-if="showStats === true"></StatsBlock>
             </div>
@@ -362,6 +373,7 @@ export default {
             const status = this.recordStore.removeRecord(this.dataToHandle._id);
             if (status) {
                 createToastify("L'élément a été supprimé", 'success');
+                await this.getRecords();
             }  else {
                 createToastify("L'opération a échoué", 'error');
             }

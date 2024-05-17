@@ -6,8 +6,9 @@ export const useRecordStore = defineStore('record', {
         categories: {}, 
         monthlyRevenue: 0, 
         monthlyExpense: 0, 
-        startingSold: 0, 
-        endingSold: 0 
+        startingSold: { total: 0, inBank: 0 }, 
+        endingSold: 0,
+        inBankSold: 0
     }),
 
     actions: {
@@ -37,7 +38,8 @@ export const useRecordStore = defineStore('record', {
             try {
                 this.monthlyRevenue = 0;
                 this.monthlyExpense = 0;
-                this.endingSold = this.startingSold;
+                this.endingSold = this.startingSold.total;
+                this.inBankSold = this.startingSold.inBank;
 
                 this.records = await window.frame.findRecords(minDate, maxDate);
 
@@ -55,6 +57,10 @@ export const useRecordStore = defineStore('record', {
                         this.monthlyExpense+= amount;
                     } else {
                         this.monthlyRevenue+= amount;
+                    }
+
+                    if (record.isPassed) {
+                        this.inBankSold += amount;
                     }
                 }
 
