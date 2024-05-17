@@ -1,12 +1,11 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain, shell } from 'electron'
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
-const isDevelopment = process.env.NODE_ENV !== 'production'
-const path = require('path')
-const fs = require('fs')
-const os = require("os");
+import { app, protocol, BrowserWindow, ipcMain } from 'electron';
+import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
+import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const path = require('path');
+const fs = require('fs');
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -58,33 +57,6 @@ async function createWindow() {
     ipcMain.on('on-reload', () => {
         win.reload();
     })
-
-	// handle export to PDF
-	ipcMain.on('exportPdf', (e, filename) => {
-		console.log(os.homedir())
-		var filepath = path.join(os.homedir(), 'Documents/' + filename + '.pdf');
-		// Options du PDF
-		var options = {
-			marginsType: 1,
-			pageSize: 'A4',
-			printBackground: true,
-			printSelectionOnly: false,
-			landscape: false
-		}
-		
-		win.webContents.printToPDF(options).then(data => {
-			fs.writeFile(filepath, data, function (err) {
-				if (err) {
-					console.log(err);
-				} else {
-					shell.showItemInFolder(filepath); 
-					shell.openPath(filepath);
-				}
-			});
-		}).catch(error => {
-			console.log(error)
-		});
-	})
 }
 
 // Quit when all windows are closed.

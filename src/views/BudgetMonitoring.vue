@@ -178,11 +178,6 @@
                 </div>
                 <StatsBlock :currentDate="date" v-if="showStats === true"></StatsBlock>
             </div>
-            <footer class="card-footer d-print-none text-end" v-if="showTable === true">
-                <button class="btn btn-primary" @click="exportToPdf">
-                    Exporter en PDF
-                </button>
-            </footer>
         </section>
 
         <AddAction :data="dataToHandle" :currentDate="date" @on-refresh="getRecords" @on-close="openEditModal = false" v-if="openEditModal">
@@ -382,13 +377,6 @@ export default {
             this.openDeleteModal = false;
             this.dataToHandle = { _id: null, title: '', date: null, category: null, amount: 0, isPassed: false, isChecked: false };
         },
-
-        exportToPdf() {
-            const date = new Date(this.date.year, this.date.month, 1);
-            const suffix = this.showTable ? '-table' : '-chart';
-            const filename = 'export-' + dayjs(date).format('YYYY-MM') + '-'+ dayjs().format('YYYY-MM-DD') + suffix;
-            window.frame.exportToPdf(filename)
-        }
     },
 }
 </script>
